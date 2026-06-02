@@ -1,0 +1,55 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: kine_app
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - kine_network
+
+  nginx:
+    image: nginx:latest
+    container_name: kine_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - kine_network
+
+  postgres:
+    image: postgres:16
+    container_name: kine_postgres
+    environment:
+      POSTGRES_USER: kine
+      POSTGRES_PASSWORD: kine
+      POSTGRES_DB: kine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kine_network
+
+  frontend:
+    image: node:22
+    container_name: kine_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    command: npm start
+    ports:
+      - "4200:4200"
+    networks:
+      - kine_network
+
+volumes:
+  postgres_data:
+
+networks:
+  kine_network:
