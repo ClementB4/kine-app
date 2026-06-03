@@ -2,37 +2,37 @@
 
 namespace App\Entity;
 
-use App\Repository\PatientPhysioRepository;
+use App\Repository\PatientCasePhysioRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
-#[ORM\Entity(repositoryClass: PatientPhysioRepository::class)]
-class PatientPhysio
+#[ORM\Entity(repositoryClass: PatientCasePhysioRepository::class)]
+class PatientCasePhysio
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'patientPhysios')]
+    #[ORM\ManyToOne(inversedBy: 'patientCasePhysios')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Patient $patient = null;
+    private ?PatientCase $patientCase = null;
 
-    #[ORM\ManyToOne(inversedBy: 'patientPhysios')]
+    #[ORM\ManyToOne(inversedBy: 'patientCasePhysios')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Workplace $workplace = null;
 
-    #[ORM\ManyToOne(inversedBy: 'patientPhysios')]
+    #[ORM\ManyToOne(inversedBy: 'patientCasePhysios')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\Column]
     private ?bool $isPrimary = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private ?\DateTimeImmutable $assignedAt = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $startedAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $endedAt = null;
 
     public function getId(): ?int
@@ -40,14 +40,14 @@ class PatientPhysio
         return $this->id;
     }
 
-    public function getPatient(): ?Patient
+    public function getPatientCase(): ?PatientCase
     {
-        return $this->patient;
+        return $this->patientCase;
     }
 
-    public function setPatient(?Patient $patient): static
+    public function setPatientCase(?PatientCase $patientCase): static
     {
-        $this->patient = $patient;
+        $this->patientCase = $patientCase;
 
         return $this;
     }
@@ -88,14 +88,14 @@ class PatientPhysio
         return $this;
     }
 
-    public function getAssignedAt(): ?\DateTimeImmutable
+    public function getStartedAt(): ?\DateTimeImmutable
     {
-        return $this->assignedAt;
+        return $this->startedAt;
     }
 
-    public function setAssignedAt(\DateTimeImmutable $assignedAt): static
+    public function setStartedAt(\DateTimeImmutable $startedAt): static
     {
-        $this->assignedAt = $assignedAt;
+        $this->startedAt = $startedAt;
 
         return $this;
     }
@@ -105,7 +105,7 @@ class PatientPhysio
         return $this->endedAt;
     }
 
-    public function setEndedAt(?\DateTimeImmutable $endedAt): static
+    public function setEndedAt(\DateTimeImmutable $endedAt): static
     {
         $this->endedAt = $endedAt;
 

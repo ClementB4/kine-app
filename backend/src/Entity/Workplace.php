@@ -41,15 +41,15 @@ class Workplace
     private Collection $userWorkplaces;
 
     /**
-     * @var Collection<int, PatientPhysio>
+     * @var Collection<int, PatientCasePhysio>
      */
-    #[ORM\OneToMany(targetEntity: PatientPhysio::class, mappedBy: 'workplace')]
-    private Collection $patientPhysios;
+    #[ORM\OneToMany(targetEntity: PatientCasePhysio::class, mappedBy: 'workplace')]
+    private Collection $patientCasePhysios;
 
     public function __construct()
     {
         $this->userWorkplaces = new ArrayCollection();
-        $this->patientPhysios = new ArrayCollection();
+        $this->patientCasePhysios = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,12 +83,12 @@ class Workplace
 
     public function getPostalCode(): ?string
     {
-        return $this->postal_code;
+        return $this->postalCode;
     }
 
-    public function setPostalCode(?string $postal_code): static
+    public function setPostalCode(?string $postalCode): static
     {
-        $this->postal_code = $postal_code;
+        $this->postalCode = $postalCode;
 
         return $this;
     }
@@ -107,24 +107,24 @@ class Workplace
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
-        $this->updated_at = $updated_at;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -160,29 +160,29 @@ class Workplace
     }
 
     /**
-     * @return Collection<int, PatientPhysio>
+     * @return Collection<int, PatientCasePhysio>
      */
-    public function getPatientPhysios(): Collection
+    public function getPatientCasePhysios(): Collection
     {
-        return $this->patientPhysios;
+        return $this->patientCasePhysios;
     }
 
-    public function addPatientPhysio(PatientPhysio $patientPhysio): static
+    public function addPatientCasePhysio(PatientCasePhysio $patientCasePhysio): static
     {
-        if (!$this->patientPhysios->contains($patientPhysio)) {
-            $this->patientPhysios->add($patientPhysio);
-            $patientPhysio->setWorkplace($this);
+        if (!$this->patientCasePhysios->contains($patientCasePhysio)) {
+            $this->patientCasePhysios->add($patientCasePhysio);
+            $patientCasePhysio->setWorkplace($this);
         }
 
         return $this;
     }
 
-    public function removePatientPhysio(PatientPhysio $patientPhysio): static
+    public function removePatientCasePhysio(PatientCasePhysio $patientCasePhysio): static
     {
-        if ($this->patientPhysios->removeElement($patientPhysio)) {
+        if ($this->patientCasePhysios->removeElement($patientCasePhysio)) {
             // set the owning side to null (unless already changed)
-            if ($patientPhysio->getWorkplace() === $this) {
-                $patientPhysio->setWorkplace(null);
+            if ($patientCasePhysio->getWorkplace() === $this) {
+                $patientCasePhysio->setWorkplace(null);
             }
         }
 

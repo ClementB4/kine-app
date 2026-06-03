@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\PatientPhysio;
+use App\Entity\Exercise;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PatientPhysio>
+ * @extends ServiceEntityRepository<Exercise>
  */
-class PatientPhysioRepository extends ServiceEntityRepository
+class ExerciseRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PatientPhysio::class);
+        parent::__construct($registry, Exercise::class);
     }
 
     //    /**
-    //     * @return PatientPhysio[] Returns an array of PatientPhysio objects
+    //     * @return Exercise[] Returns an array of Exercise objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('e')
+    //            ->andWhere('e.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
+    //            ->orderBy('e.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?PatientPhysio
+    //    public function findOneBySomeField($value): ?Exercise
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('e')
+    //            ->andWhere('e.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

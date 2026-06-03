@@ -23,7 +23,7 @@ class Patient
     private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateImmutable $birthDate = null;
+    private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 5, nullable: true)]
     private ?string $gender = null;
@@ -57,14 +57,14 @@ class Patient
     private ?User $user = null;
 
     /**
-     * @var Collection<int, PatientPhysio>
+     * @var Collection<int, PatientCase>
      */
-    #[ORM\OneToMany(targetEntity: PatientPhysio::class, mappedBy: 'patient')]
-    private Collection $patientPhysios;
+    #[ORM\OneToMany(targetEntity: PatientCase::class, mappedBy: 'patient')]
+    private Collection $patientCases;
 
     public function __construct()
     {
-        $this->patientPhysios = new ArrayCollection();
+        $this->patientCases = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,12 +96,12 @@ class Patient
         return $this;
     }
 
-    public function getBirthDate(): ?\DateImmutable
+    public function getBirthDate(): ?\DateTimeImmutable
     {
         return $this->birthDate;
     }
 
-    public function setBirthDate(\DateImmutable $birthDate): static
+    public function setBirthDate(\DateTimeImmutable $birthDate): static
     {
         $this->birthDate = $birthDate;
 
@@ -229,29 +229,29 @@ class Patient
     }
 
     /**
-     * @return Collection<int, PatientPhysio>
+     * @return Collection<int, PatientCase>
      */
-    public function getPatientPhysios(): Collection
+    public function getPatientCases(): Collection
     {
-        return $this->patientPhysios;
+        return $this->patientCases;
     }
 
-    public function addPatientPhysio(PatientPhysio $patientPhysio): static
+    public function addPatientCase(PatientCase $patientCase): static
     {
-        if (!$this->patientPhysios->contains($patientPhysio)) {
-            $this->patientPhysios->add($patientPhysio);
-            $patientPhysio->setPatient($this);
+        if (!$this->patientCases->contains($patientCase)) {
+            $this->patientCases->add($patientCase);
+            $patientCase->setPatient($this);
         }
 
         return $this;
     }
 
-    public function removePatientPhysio(PatientPhysio $patientPhysio): static
+    public function removePatientCase(PatientCase $patientCase): static
     {
-        if ($this->patientPhysios->removeElement($patientPhysio)) {
+        if ($this->patientCases->removeElement($patientCase)) {
             // set the owning side to null (unless already changed)
-            if ($patientPhysio->getPatient() === $this) {
-                $patientPhysio->setPatient(null);
+            if ($patientCase->getPatient() === $this) {
+                $patientCase->setPatient(null);
             }
         }
 

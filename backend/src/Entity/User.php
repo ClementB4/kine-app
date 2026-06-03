@@ -60,15 +60,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Patient $patient = null;
 
     /**
-     * @var Collection<int, PatientPhysio>
+     * @var Collection<int, PatientCasePhysio>
      */
-    #[ORM\OneToMany(targetEntity: PatientPhysio::class, mappedBy: 'user')]
-    private Collection $patientPhysios;
+    #[ORM\OneToMany(targetEntity: PatientCasePhysio::class, mappedBy: 'user')]
+    private Collection $patientCasePhysios;
+
+    /**
+     * @var Collection<int, Session>
+     */
+    #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'createdBy')]
+    private Collection $sessions;
 
     public function __construct()
     {
         $this->userWorkplaces = new ArrayCollection();
-        $this->patientPhysios = new ArrayCollection();
+        $this->patientCasePhysios = new ArrayCollection();
+        $this->sessions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -265,29 +272,59 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, PatientPhysio>
+     * @return Collection<int, PatientCasePhysio>
      */
-    public function getPatientPhysios(): Collection
+    public function getPatientCasePhysios(): Collection
     {
-        return $this->patientPhysios;
+        return $this->patientCasePhysios;
     }
 
-    public function addPatientPhysio(PatientPhysio $patientPhysio): static
+    public function addPatientCasePhysio(PatientCasePhysio $patientCasePhysio): static
     {
-        if (!$this->patientPhysios->contains($patientPhysio)) {
-            $this->patientPhysios->add($patientPhysio);
-            $patientPhysio->setUser($this);
+        if (!$this->patientCasePhysios->contains($patientCasePhysio)) {
+            $this->patientCasePhysios->add($patientCasePhysio);
+            $patientCasePhysio->setUser($this);
         }
 
         return $this;
     }
 
-    public function removePatientPhysio(PatientPhysio $patientPhysio): static
+    public function removePatientCasePhysio(PatientCasePhysio $patientCasePhysio): static
     {
-        if ($this->patientPhysios->removeElement($patientPhysio)) {
+        if ($this->patientCasePhysios->removeElement($patientCasePhysio)) {
             // set the owning side to null (unless already changed)
-            if ($patientPhysio->getUser() === $this) {
-                $patientPhysio->setUser(null);
+            if ($patientCasePhysio->getUser() === $this) {
+                $patientCasePhysio->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Session>
+     */
+    public function getSessions(): Collection
+    {
+        return $this->sessions;
+    }
+
+    public function addSession(Session $session): static
+    {
+        if (!$this->sessions->contains($session)) {
+            $this->sessions->add($session);
+            $session->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSession(Session $session): static
+    {
+        if ($this->sessions->removeElement($session)) {
+            // set the owning side to null (unless already changed)
+            if ($session->getCreatedBy() === $this) {
+                $session->setCreatedBy(null);
             }
         }
 
