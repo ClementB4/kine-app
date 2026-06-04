@@ -36,6 +36,9 @@ class PatientCase
     #[ORM\JoinColumn(nullable: false)]
     private ?Patient $patient = null;
 
+    #[ORM\Column(enumType: PatientCaseStatus::class)]
+    private ?PatientCaseStatus $status = null;
+
     /**
      * @var Collection<int, PatientCasePhysio>
      */
@@ -54,8 +57,6 @@ class PatientCase
     #[ORM\OneToMany(targetEntity: Session::class, mappedBy: 'patientCase')]
     private Collection $sessions;
 
-    #[ORM\Column(enumType: PatientCaseStatus::class)]
-    private ?PatientCaseStatus $status = null;
 
     public function __construct()
     {

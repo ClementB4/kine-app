@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\ExerciseCategory;
 use App\Enum\ExerciseType;
 use App\Repository\ExerciseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -38,8 +39,8 @@ class Exercise
     #[ORM\OneToMany(targetEntity: SessionExercise::class, mappedBy: 'exercise')]
     private Collection $sessionExercises;
 
-    #[ORM\Column(enumType: ExerciseType::class)]
-    private ?ExerciseType $type = null;
+    #[ORM\Column(enumType: ExerciseCategory::class)]
+    private ?ExerciseCategory $category = null;
 
     public function __construct()
     {
@@ -141,14 +142,14 @@ class Exercise
         return $this;
     }
 
-    public function getType(): ?ExerciseType
+    public function getCategory(): ?ExerciseCategory
     {
-        return $this->type;
+        return $this->category;
     }
 
-    public function setType(ExerciseType $type): static
+    public function setCategory(ExerciseCategory $category): static
     {
-        $this->type = $type;
+        $this->category = $category;
 
         return $this;
     }
