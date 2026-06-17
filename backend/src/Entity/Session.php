@@ -42,6 +42,12 @@ class Session
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createdBy = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $note = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $rpe = null;
+
     public function __construct()
     {
         $this->sessionExercises = new ArrayCollection();
@@ -150,6 +156,30 @@ class Session
     public function setCreatedBy(?User $createdBy): static
     {
         $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): static
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    public function getRpe(): ?float
+    {
+        return $this->rpe;
+    }
+
+    public function setRpe(?float $rpe): static
+    {
+        $this->rpe = $rpe;
 
         return $this;
     }

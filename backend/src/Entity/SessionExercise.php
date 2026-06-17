@@ -29,7 +29,7 @@ class SessionExercise
     private ?int $repetitions = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $duration = null;
+    private ?string $tempo = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comment = null;
@@ -39,6 +39,18 @@ class SessionExercise
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $charge = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $recoveryTime = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $note = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $rpe = null;
 
     public function getId(): ?int
     {
@@ -95,12 +107,12 @@ class SessionExercise
 
     public function getDuration(): ?string
     {
-        return $this->duration;
+        return $this->tempo;
     }
 
-    public function setDuration(string $duration): static
+    public function setDuration(string $tempo): static
     {
-        $this->duration = $duration;
+        $this->tempo = $tempo;
 
         return $this;
     }
@@ -137,6 +149,54 @@ class SessionExercise
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCharge(): ?string
+    {
+        return $this->charge;
+    }
+
+    public function setCharge(?string $charge): static
+    {
+        $this->charge = $charge;
+
+        return $this;
+    }
+
+    public function getRecoveryTime(): ?string
+    {
+        return $this->recoveryTime;
+    }
+
+    public function setRecoveryTime(?string $recoveryTime): static
+    {
+        $this->recoveryTime = $recoveryTime;
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): static
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    public function getRpe(): ?float
+    {
+        return $this->rpe;
+    }
+
+    public function setRpe(?float $rpe): static
+    {
+        $this->rpe = $rpe;
 
         return $this;
     }
