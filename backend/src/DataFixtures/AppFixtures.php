@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Workplace;
@@ -18,6 +19,10 @@ use \App\Entity\PatientCasePhysio;
 
 class AppFixtures extends Fixture
 {
+    public function __construct(private UserPasswordHasherInterface $passwordHasher)
+    {
+    }
+    
     public function load(ObjectManager $manager): void
     {
 
@@ -49,10 +54,10 @@ class AppFixtures extends Fixture
         
         // Create and persist users
         $users = [
-            ['admin@example.com', 'admin', 'User', '$2y$13$8K7.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5', ['ROLE_SUPER_ADMIN'], true],
-            ['kine1@example.com', 'Sophie', 'Bodiguel', '$2y$13$8K7.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5', ['ROLE_PHYSIO'], true],
-            ['kine2@example.com', 'Jean', 'Dupont', '$2y$13$8K7.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5', ['ROLE_PHYSIO'], true],
-            ['patient1@example.com', 'Marie', 'Dubois', '$2y$13$8K7.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5.5', ['ROLE_PATIENT'], true]
+            ['admin@example.com', 'admin', 'User', ['ROLE_SUPER_ADMIN'], true],
+            ['kine1@example.com', 'Sophie', 'Bodiguel', ['ROLE_PHYSIO'], true],
+            ['kine2@example.com', 'Jean', 'Dupont', ['ROLE_PHYSIO'], true],
+            ['patient1@example.com', 'Marie', 'Dubois', ['ROLE_PATIENT'], true]
         ];
 
         foreach ($users as $u) {
@@ -60,9 +65,9 @@ class AppFixtures extends Fixture
             $user->setEmail($u[0]);
             $user->setFirstname($u[1]);
             $user->setLastname($u[2]);
-            $user->setPassword($u[3]);
-            $user->setRoles($u[4]);
-            $user->setIsActive($u[5]);
+            $user->setPassword($this->passwordHasher->hashPassword($user, 'kine'));
+            $user->setRoles($u[3]);
+            $user->setIsActive($u[4]);
             $user->setCreatedAt(new \DateTimeImmutable());
             $user->setUpdatedAt(new \DateTimeImmutable());
 

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: PatientRepository::class)]
 class Patient
@@ -14,46 +15,60 @@ class Patient
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['patient.index', 'patient.show'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['patient.index', 'patient.show'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['patient.index', 'patient.show'])]
     private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Groups(['patient.index', 'patient.show'])]
     private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 5, nullable: true)]
+    #[Groups(['patient.index', 'patient.show'])]
     private ?string $gender = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['patient.show'])]
     private ?int $height = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['patient.show'])]
     private ?int $weight = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['patient.show'])]
     private ?string $job = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['patient.show'])]
     private ?string $sport = null;
 
     #[ORM\Column(length: 6, nullable: true)]
+    #[Groups(['patient.show'])]
     private ?string $laterality = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['patient.show'])]
     private ?string $comment = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Groups(['patient.show'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Groups(['patient.show'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\OneToOne(inversedBy: 'patient', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['patient.index', 'patient.show'])]
     private ?User $user = null;
 
     /**
