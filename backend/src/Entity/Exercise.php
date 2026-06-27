@@ -3,12 +3,12 @@
 namespace App\Entity;
 
 use App\Enum\ExerciseCategory;
-use App\Enum\ExerciseType;
 use App\Repository\ExerciseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ExerciseRepository::class)]
 class Exercise
@@ -16,21 +16,27 @@ class Exercise
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['exercise.index', 'exercise.show'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['exercise.index', 'exercise.show'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['exercise.index', 'exercise.show'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['exercise.show'])]
     private ?string $videoUrl = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Groups(['exercise.show'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Groups(['exercise.show'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
@@ -40,6 +46,7 @@ class Exercise
     private Collection $sessionExercises;
 
     #[ORM\Column(enumType: ExerciseCategory::class)]
+    #[Groups(['exercise.index', 'exercise.show'])]
     private ?ExerciseCategory $category = null;
 
     public function __construct()

@@ -58,10 +58,11 @@ final class PatientController extends AbstractController
     {
         try {
             $data = $request->toArray();
-        } catch (\JsonException|\Throwable $e) {
-            return $this->json([
-                'error' => 'Invalid JSON'
-            ], 400);
+        } catch (\JsonException) {
+            return $this->json(
+                ['error' => 'Invalid JSON'], 
+                400
+            );
         }
 
         $patient = new Patient();
@@ -74,7 +75,7 @@ final class PatientController extends AbstractController
             $patient, 
             201,
             [],
-            ['groups' => ['patients.show']]
+            ['groups' => ['patient.show']]
         );
     }
 
@@ -88,10 +89,11 @@ final class PatientController extends AbstractController
     {
         try {
             $data = $request->toArray();
-        } catch (\JsonException|\Throwable $e) {
-            return $this->json([
-                'error' => 'Invalid JSON'
-            ], 400);
+        } catch (\JsonException) {
+            return $this->json(
+                ['error' => 'Invalid JSON'], 
+                400
+            );
         }
 
         $patient = $patientRepository->find($id);
@@ -105,8 +107,10 @@ final class PatientController extends AbstractController
             
             $em->flush();
             return $this->json(
-                ["success" => "Patient updated"], 
+                $patient, 
                 200,
+                [],
+                ['groups' => ['patient.show']]
             );
         }
     }
