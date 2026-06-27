@@ -164,7 +164,7 @@ class Patient
         return $this->job;
     }
 
-    public function setJob(string $job): static
+    public function setJob(?string $job): static
     {
         $this->job = $job;
 
