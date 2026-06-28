@@ -49,7 +49,7 @@ final class ExerciseController extends AbstractController
             $exercise,
             200,
             [],
-            ['groups' => ['exercise.show']]
+            ['groups' => ['exercise.show', 'dates']]
         );
     }
 
@@ -86,7 +86,7 @@ final class ExerciseController extends AbstractController
             $exercise,
             201,
             [],
-            ['groups' => ['exercise.show']]
+            ['groups' => ['exercise.show', 'dates']]
         );
     }
 
@@ -138,7 +138,7 @@ final class ExerciseController extends AbstractController
                 $exercise,
                 200,
                 [],
-                ['groups' => ['exercise.show']]
+                ['groups' => ['exercise.show', 'dates']]
             );
         }
     }

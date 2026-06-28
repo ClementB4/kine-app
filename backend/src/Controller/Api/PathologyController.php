@@ -47,7 +47,7 @@ final class PathologyController extends AbstractController
             $pathology,
             200,
             [],
-            ['groups' => ['pathology.show']]
+            ['groups' => ['pathology.show', 'dates']]
         );
     }
 
@@ -76,7 +76,7 @@ final class PathologyController extends AbstractController
             $pathology,
             201,
             [],
-            ['groups' => ['pathology.show']]
+            ['groups' => ['pathology.show', 'dates']]
         );
     }
 
@@ -111,7 +111,7 @@ final class PathologyController extends AbstractController
                 $pathology,
                 200,
                 [],
-                ['groups' => ['pathology.show']]
+                ['groups' => ['pathology.show', 'dates']]
             );
         }
     }

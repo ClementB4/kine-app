@@ -46,7 +46,7 @@ final class PatientController extends AbstractController
             $patient,
             200,
             [],
-            ['groups' => ['patient.show']]
+            ['groups' => ['patient.show', 'dates']]
         );
     }
 
@@ -75,7 +75,7 @@ final class PatientController extends AbstractController
             $patient, 
             201,
             [],
-            ['groups' => ['patient.show']]
+            ['groups' => ['patient.show', 'dates']]
         );
     }
 
@@ -110,7 +110,7 @@ final class PatientController extends AbstractController
                 $patient, 
                 200,
                 [],
-                ['groups' => ['patient.show']]
+                ['groups' => ['patient.show', 'dates']]
             );
         }
     }
