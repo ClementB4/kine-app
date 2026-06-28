@@ -3,15 +3,15 @@
 namespace App\Controller\Api;
 
 use App\Entity\Patient;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/patients')]
-final class PatientController extends AbstractController
+final class PatientController extends BaseApiController
 {
     #[Route('', methods: ['GET'])]
     public function index(
@@ -36,10 +36,7 @@ final class PatientController extends AbstractController
         $patient = $patientRepository->find($id);
 
         if (!$patient) {
-            return $this->json(
-                ['error' => 'Patient not found'],
-                404
-            );
+            return $this->notFound('Patient');
         };
 
         return $this->json(
@@ -53,21 +50,23 @@ final class PatientController extends AbstractController
     #[Route('', methods: ['POST'])]
     public function create(
         Request $request, 
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ValidatorInterface $validator
     ): JsonResponse 
     {
-        try {
-            $data = $request->toArray();
-        } catch (\JsonException) {
-            return $this->json(
-                ['error' => 'Invalid JSON'], 
-                400
-            );
-        }
+        $data = $this->parseJson($request);
 
         $patient = new Patient();
         $this->hydratePatient($patient, $data);
-        $patient->setCreatedAt(new \DateTimeImmutable());
+        
+        $errors = $this->validationErrors($patient, $validator);
+
+        if ($errors) {
+            return $this->json(
+                ['Error' => $errors],
+                400
+            );
+        }
 
         $em->persist($patient);
         $em->flush();
@@ -84,26 +83,26 @@ final class PatientController extends AbstractController
         int $id, 
         Request $request, 
         PatientRepository $patientRepository, 
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ValidatorInterface $validator
     ): JsonResponse 
     {
-        try {
-            $data = $request->toArray();
-        } catch (\JsonException) {
-            return $this->json(
-                ['error' => 'Invalid JSON'], 
-                400
-            );
-        }
+        $data = $this->parseJson($request);
 
         $patient = $patientRepository->find($id);
         if (!$patient) {
-            return $this->json(
-                ['error' => 'Patient not found'],
-                404
-            );
+            return $this->notFound('Patient');
         } else {
             $this->hydratePatient($patient, $data);
+
+            $errors = $this->validationErrors($patient, $validator);
+
+            if ($errors) {
+                return $this->json(
+                    ['Error' => $errors],
+                    400
+                );
+            }
             
             $em->flush();
             return $this->json(
@@ -130,6 +129,5 @@ final class PatientController extends AbstractController
         $patient->setSport($data['sport']);
         $patient->setLaterality($data['laterality']);
         $patient->setComment($data['comment']);
-        $patient->setUpdatedAt(new \DateTimeImmutable());
     }
 }

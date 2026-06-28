@@ -6,14 +6,13 @@ use App\Entity\Exercise;
 use App\Enum\ExerciseCategory;
 use App\Repository\ExerciseRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/exercises')]
-final class ExerciseController extends AbstractController
+final class ExerciseController extends BaseApiController
 {
     #[Route('', methods: ['GET'])]
     public function index(
@@ -39,10 +38,7 @@ final class ExerciseController extends AbstractController
         $exercise = $exerciseRepository->find($id);
 
         if (!$exercise) {
-            return $this->json(
-                ['Error' => 'Exercise not found.'],
-                404
-            );
+            return $this->notFound('Exercise');
         }
 
         return $this->json(
@@ -60,22 +56,16 @@ final class ExerciseController extends AbstractController
         ValidatorInterface $validator
     ): JsonResponse
     {
-        try {
-            $data = $request->toArray();
-        } catch (\JsonException) {
-            return $this->json(
-                ['error' => 'Invalid JSON'], 
-                400
-            );
-        }
+        $data = $this->parseJson($request);
 
         $exercise = new Exercise();
         $this->hydrateExercise($exercise, $data);
 
-        $errors = $validator->validate($exercise);
-        if (count($errors) > 0) {
+        $errors = $this->validationErrors($exercise, $validator);
+
+        if ($errors) {
             return $this->json(
-                (string) $errors, 
+                ['Error' => $errors],
                 400
             );
         }
@@ -99,36 +89,19 @@ final class ExerciseController extends AbstractController
         ValidatorInterface $validator
     ): JsonResponse
     {
-        try {
-            $data = $request->toArray();
-        } catch (\JsonException) {
-            return $this->json(
-                ['error' => 'Invalid JSON'], 
-                400
-            );
-        }
+        $data = $this->parseJson($request);
 
         $exercise = $exerciseRepository->find($id);
         if (!$exercise) {
-            return $this->json(
-                ['Error' => 'Exercise not found.'],
-                404
-            );
+            return $this->notFound('Exercise');
         } else {
             $this->hydrateExercise($exercise, $data);
 
-            $formattedErrors = [];
+            $errors = $this->validationErrors($exercise, $validator);
 
-            $errors = $validator->validate($exercise);
-            if (count($errors) > 0) {
-                foreach($errors as $error) {
-                    $formattedErrors[] = [
-                        'field' => $error->getPropertyPath(),
-                        'message' => $error->getMessage()
-                    ];
-                };
+            if ($errors) {
                 return $this->json(
-                    ['errors' => $formattedErrors], 
+                    ['Error' => $errors],
                     400
                 );
             }
@@ -148,15 +121,12 @@ final class ExerciseController extends AbstractController
         int $id,
         EntityManagerInterface $em,
         ExerciseRepository $exerciseRepository
-    )
+    ): JsonResponse
     {
         $exercise = $exerciseRepository->find($id);
 
         if (!$exercise) {
-            return $this->json(
-                ['Error' => 'Exercise not found.'],
-                404
-            );
+            return $this->notFound('Exercise');
         }
         
         $em->remove($exercise);

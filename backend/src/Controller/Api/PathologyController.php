@@ -5,13 +5,13 @@ namespace App\Controller\Api;
 use App\Entity\Pathology;
 use App\Repository\PathologyRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/pathologies')]
-final class PathologyController extends AbstractController
+final class PathologyController extends BaseApiController
 {
     #[Route('', methods: ['GET'])]
     public function index(
@@ -37,10 +37,7 @@ final class PathologyController extends AbstractController
         $pathology = $pathologyRepository->find($id);
 
         if (!$pathology) {
-            return $this->json(
-                ['Error' => 'Pathology not found.'],
-                404
-            );
+            return $this->notFound('Pathology');
         }
 
         return $this->json(
@@ -54,21 +51,23 @@ final class PathologyController extends AbstractController
     #[Route('', methods: ['POST'])]
     public function create(
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ValidatorInterface $validator
     ): JsonResponse
     {
-        try {
-            $data = $request->toArray();
-        } catch (\JsonException) {
-            return $this->json(
-                ['error' => 'Invalid JSON'], 
-                400
-            );
-        }
+        $data = $this->parseJson($request);
 
         $pathology = new Pathology();
         $this->hydratePathology($pathology, $data);
-        $pathology->setCreatedAt(new \DateTimeImmutable());
+
+        $errors = $this->validationErrors($pathology, $validator);
+
+        if ($errors) {
+            return $this->json(
+                ['Error' => $errors],
+                400
+            );
+        }
 
         $em->persist($pathology);
         $em->flush();
@@ -85,26 +84,26 @@ final class PathologyController extends AbstractController
         int $id,
         PathologyRepository $pathologyRepository,
         EntityManagerInterface $em,
-        Request $request
+        Request $request,
+        ValidatorInterface $validator
     ): JsonResponse
     {
-        try {
-            $data = $request->toArray();
-        } catch (\JsonException) {
-            return $this->json(
-                ['error' => 'Invalid JSON'], 
-                400
-            );
-        }
+        $data = $this->parseJson($request);
 
         $pathology = $pathologyRepository->find($id);
         if (!$pathology) {
-            return $this->json(
-                ['Error' => 'Pathology not found.'],
-                404
-            );
+            return $this->notFound('Pathology');
         } else {
             $this->hydratePathology($pathology, $data);
+
+            $errors = $this->validationErrors($pathology, $validator);
+
+            if ($errors) {
+                return $this->json(
+                    ['Error' => $errors],
+                    400
+                );
+            }
 
             $em->flush();
             return $this->json(
@@ -121,15 +120,12 @@ final class PathologyController extends AbstractController
         int $id,
         EntityManagerInterface $em,
         PathologyRepository $pathologyRepository
-    )
+    ): JsonResponse
     {
         $pathology = $pathologyRepository->find($id);
 
         if (!$pathology) {
-            return $this->json(
-                ['Error' => 'Pathology not found.'],
-                404
-            );
+            return $this->notFound('Pathology');
         }
         
         $em->remove($pathology);
@@ -149,6 +145,5 @@ final class PathologyController extends AbstractController
         $pathology->setName($data['name']);
         $pathology->setDescription($data['description']);
         $pathology->setEstimatedRecoveryDays($data['estimatedRecoveryDays']);
-        $pathology->setUpdatedAt(new \DateTimeImmutable());
     }
 }
