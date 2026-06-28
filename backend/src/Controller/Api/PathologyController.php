@@ -116,6 +116,31 @@ final class PathologyController extends AbstractController
         }
     }
 
+    #[Route('/{id}', methods: ['DELETE'])]
+    public function delete(
+        int $id,
+        EntityManagerInterface $em,
+        PathologyRepository $pathologyRepository
+    )
+    {
+        $pathology = $pathologyRepository->find($id);
+
+        if (!$pathology) {
+            return $this->json(
+                ['Error' => 'Pathology not found.'],
+                404
+            );
+        }
+        
+        $em->remove($pathology);
+        $em->flush();
+
+        return $this->json(
+            null,
+            204
+        );
+    }
+
     private function hydratePathology(
         Pathology $pathology, 
         array $data

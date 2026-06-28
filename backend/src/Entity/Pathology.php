@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PathologyRepository::class)]
 class Pathology
@@ -19,6 +20,7 @@ class Pathology
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
     #[Groups(['pathology.index', 'pathology.show'])]
     private ?string $name = null;
 
@@ -27,6 +29,7 @@ class Pathology
     private ?string $description = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Assert\Positive()]
     #[Groups(['pathology.index', 'pathology.show'])]
     private ?int $estimatedRecoveryDays = null;
 
@@ -34,7 +37,7 @@ class Pathology
     #[Groups(['pathology.show'])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['pathology.show'])]
     private ?\DateTimeImmutable $updatedAt = null;
 

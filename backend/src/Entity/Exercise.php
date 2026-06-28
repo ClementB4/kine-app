@@ -9,7 +9,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: ExerciseRepository::class)]
 class Exercise
 {
@@ -20,6 +22,8 @@ class Exercise
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 5)]
     #[Groups(['exercise.index', 'exercise.show'])]
     private ?string $name = null;
 
@@ -28,6 +32,8 @@ class Exercise
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url()]
+    #[Assert\Regex('/youtube\.com|youtu\.be/')]
     #[Groups(['exercise.show'])]
     private ?string $videoUrl = null;
 
@@ -46,6 +52,7 @@ class Exercise
     private Collection $sessionExercises;
 
     #[ORM\Column(enumType: ExerciseCategory::class)]
+    #[Assert\NotBlank()]
     #[Groups(['exercise.index', 'exercise.show'])]
     private ?ExerciseCategory $category = null;
 
@@ -159,5 +166,19 @@ class Exercise
         $this->category = $category;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function onPrePersist(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }

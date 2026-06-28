@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PatientRepository::class)]
 class Patient
@@ -19,14 +20,20 @@ class Patient
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2)]
     #[Groups(['patient.index', 'patient.show'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2)]
     #[Groups(['patient.index', 'patient.show'])]
     private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Assert\NotBlank()]
+    #[Assert\Date()]
     #[Groups(['patient.index', 'patient.show'])]
     private ?\DateTimeImmutable $birthDate = null;
 
@@ -35,10 +42,12 @@ class Patient
     private ?string $gender = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Assert\Positive()]
     #[Groups(['patient.show'])]
     private ?int $height = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Assert\Positive()]
     #[Groups(['patient.show'])]
     private ?int $weight = null;
 

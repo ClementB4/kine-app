@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/exercises')]
 final class ExerciseController extends AbstractController
@@ -55,7 +56,8 @@ final class ExerciseController extends AbstractController
     #[Route('', methods: ['POST'])]
     public function create(
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ValidatorInterface $validator
     ): JsonResponse
     {
         try {
@@ -69,7 +71,14 @@ final class ExerciseController extends AbstractController
 
         $exercise = new Exercise();
         $this->hydrateExercise($exercise, $data);
-        $exercise->setCreatedAt(new \DateTimeImmutable());
+
+        $errors = $validator->validate($exercise);
+        if (count($errors) > 0) {
+            return $this->json(
+                (string) $errors, 
+                400
+            );
+        }
 
         $em->persist($exercise);
         $em->flush();
@@ -86,7 +95,8 @@ final class ExerciseController extends AbstractController
         int $id,
         ExerciseRepository $exerciseRepository,
         EntityManagerInterface $em,
-        Request $request
+        Request $request,
+        ValidatorInterface $validator
     ): JsonResponse
     {
         try {
@@ -107,6 +117,22 @@ final class ExerciseController extends AbstractController
         } else {
             $this->hydrateExercise($exercise, $data);
 
+            $formattedErrors = [];
+
+            $errors = $validator->validate($exercise);
+            if (count($errors) > 0) {
+                foreach($errors as $error) {
+                    $formattedErrors[] = [
+                        'field' => $error->getPropertyPath(),
+                        'message' => $error->getMessage()
+                    ];
+                };
+                return $this->json(
+                    ['errors' => $formattedErrors], 
+                    400
+                );
+            }
+
             $em->flush();
             return $this->json(
                 $exercise,
@@ -117,6 +143,31 @@ final class ExerciseController extends AbstractController
         }
     }
 
+    #[Route('/{id}', methods: ['DELETE'])]
+    public function delete(
+        int $id,
+        EntityManagerInterface $em,
+        ExerciseRepository $exerciseRepository
+    )
+    {
+        $exercise = $exerciseRepository->find($id);
+
+        if (!$exercise) {
+            return $this->json(
+                ['Error' => 'Exercise not found.'],
+                404
+            );
+        }
+        
+        $em->remove($exercise);
+        $em->flush();
+
+        return $this->json(
+            null,
+            204
+        );
+    }
+
     private function hydrateExercise(
         Exercise $exercise, 
         array $data
@@ -125,7 +176,6 @@ final class ExerciseController extends AbstractController
         $exercise->setName($data['name']);
         $exercise->setDescription($data['description']);
         $exercise->setVideoUrl($data['videoUrl']);
-        $exercise->setCategory(ExerciseCategory::from($data['category']));
-        $exercise->setUpdatedAt(new \DateTimeImmutable());
+        $exercise->setCategory(ExerciseCategory::tryFrom($data['category']));
     }
 }
